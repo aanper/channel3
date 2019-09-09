@@ -325,7 +325,7 @@ void InternalStartHTTP( )
 LOCAL void ICACHE_FLASH_ATTR
 http_disconnetcb(void *arg) {
     struct espconn *pespconn = (struct espconn *) arg;
-	((struct HTTPConnection * )pespconn->reserve)->state = 0;
+	((struct HTTPConnection * )pespconn->reverse)->state = 0;
 }
 
 LOCAL void ICACHE_FLASH_ATTR
@@ -338,7 +338,7 @@ http_recvcb(void *arg, char *pusrdata, unsigned short length)
 	//I'm adding this back-up-the-register just in case.
 	if( curhttp ) { printf( "Unexpected Race Condition\n" );}
 
-	curhttp = (struct HTTPConnection * )pespconn->reserve;
+	curhttp = (struct HTTPConnection * )pespconn->reverse;
 	curdata = (uint8*)pusrdata;
 	curlen = length;
 	HTTPGotData();
@@ -356,7 +356,7 @@ httpserver_connectcb(void *arg)
 	{
 		if( HTTPConnections[i].state == 0 )
 		{
-			pespconn->reserve = &HTTPConnections[i];
+			pespconn->reverse = &HTTPConnections[i];
 			HTTPConnections[i].socket = pespconn;
 			HTTPConnections[i].state = HTTP_STATE_WAIT_METHOD;
 			break;
