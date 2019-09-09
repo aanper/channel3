@@ -67,3 +67,10 @@ Here is the new video (with COLOR):
 [![Broadcasting COLOR Channel 3 on an ESP](http://img.youtube.com/vi/bcez5pcp55w/0.jpg)](http://www.youtube.com/watch?v=bcez5pcp55w)
 
 
+## Building
+
+Use vowstar/esp8266 docker image for building.
+
+Download NONOS SDK and extract to project folder, specify version in makefile (SDK variable).
+
+Do `docker run --name build --rm -ti --device /dev/ttyUSB0:/dev/ttyUSB0 -v `pwd`:/build vowstar/esp8266 /bin/bash` to go to container's bash. Then `make` for build.
