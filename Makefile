@@ -19,17 +19,17 @@ SRCS:=driver/uart.c \
 	tablemaker/broadcast_tables.c \
 	tablemaker/CbTable.c
 
-GCC_FOLDER:=~/esp8266/esp-open-sdk/xtensa-lx106-elf
-ESPTOOL_PY:=~/esp8266/esptool/esptool.py
-SDK:=/home/cnlohr/esp8266/esp_iot_sdk_v1.5.2
+GCC_FOLDER:=/opt/xtensa-lx106-elf/
+ESPTOOL_PY:=esptool.py
+SDK:=esp_iot_sdk_v1.5.2
 PORT:=/dev/ttyUSB0
 #PORT:=/dev/ttyACM0
 
 XTLIB:=$(SDK)/lib
-XTGCCLIB:=$(GCC_FOLDER)/lib/gcc/xtensa-lx106-elf/4.8.5/libgcc.a
-FOLDERPREFIX:=$(GCC_FOLDER)/bin
-CC:=$(FOLDERPREFIX)/$(PREFIX)gcc
-PREFIX:=$(FOLDERPREFIX)/xtensa-lx106-elf-
+XTGCCLIB:=$(GCC_FOLDER)/lib/gcc/xtensa-lx106-elf/4.8.2/libgcc.a
+FOLDERPREFIX:=
+CC:=$(PREFIX)gcc
+PREFIX:=xtensa-lx106-elf-
 
 CFLAGS:=-mlongcalls -I$(SDK)/include -Imyclib -Iinclude -Iuser -Os -I$(SDK)/include/ -Icommon -DICACHE_FLASH
 
@@ -64,7 +64,6 @@ LINKFLAGS:= \
 #	$(PREFIX)ld $^ $(LDFLAGS) -o $@
 
 $(TARGET_OUT) : $(SRCS)
-	echo $$PATH
 	$(PREFIX)gcc $(CFLAGS) $^  $(LINKFLAGS) -o $@
 	nm -S -n $(TARGET_OUT) > image.map
 	$(PREFIX)objdump -S $@ > image.lst
