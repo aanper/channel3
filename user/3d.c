@@ -568,6 +568,11 @@ void ICACHE_FLASH_ATTR CNFGTackRectangle( short x1, short y1, short x2, short y2
 			CNFGTackPixel( x>>1, y );
 }
 
+void ICACHE_FLASH_ATTR CNFGTackPoint( short x, short y)
+{
+	CNFGTackPixel( x>>1, y );
+}
+
 
 
 

@@ -65,8 +65,14 @@ int16_t Height( int x, int y, int l )
 	return tdCOS( (x*x + y*y) + l );
 }
 
-void draw_circle(x, y, r) {
+void draw_circle(int c_x, int c_y, int r) {
+	uint8_t p = 0;
 
+	for(p = 0; p < 255; p++) {
+		int16_t x = c_x + (int16_t)tdSIN(p) * r/255;
+		int16_t y = c_y + (int16_t)tdCOS(p) * r/255;
+		CNFGTackPoint(x, y);
+	}
 }
 
 void ICACHE_FLASH_ATTR DrawFrame(  )
@@ -85,10 +91,6 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 	tdIdentity( ProjectionMatrix );
 	CNFGColor( 17 );
 
-/*
-
-*/
-
 	switch( showstate )
 	{
 		case 12: {
@@ -98,13 +100,7 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 				framessostate = 0;
 			}
 
-			uint8_t p = 0;
-
-			for(p = 0; p < 255; p++) {
-				int16_t x = FBW + (int16_t)tdSIN(p)/8;
-				int16_t y = FBH/2 + (int16_t)tdCOS(p)/8;
-				CNFGTackRectangle(x, y, x + 1, y + 1);
-			}
+			draw_circle(FBW, FBH/2, 32);
 
 			CNFGPenX = 10 + shift % FBW/2;
 			CNFGPenY = 10 + shift % FBW;
@@ -434,7 +430,7 @@ void ICACHE_FLASH_ATTR user_init(void)
 #endif
 
 
-    pUdpServer = (struct espconn *)os_zalloc(sizeof(struct espconn));
+	pUdpServer = (struct espconn *)os_zalloc(sizeof(struct espconn));
 	ets_memset( pUdpServer, 0, sizeof( struct espconn ) );
 	espconn_create( pUdpServer );
 	pUdpServer->type = ESPCONN_UDP;

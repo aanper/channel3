@@ -35,6 +35,7 @@ void ICACHE_FLASH_ATTR tdTranslate( int16_t * f, int16_t x, int16_t y, int16_t z
 void ICACHE_FLASH_ATTR tdScale( int16_t * f, int16_t x, int16_t y, int16_t z );			//Operates ON f
 void ICACHE_FLASH_ATTR tdRotateEA( int16_t * f, int16_t x, int16_t y, int16_t z );		//Operates ON f
 
+void ICACHE_FLASH_ATTR CNFGTackPoint( short x, short y);
 void ICACHE_FLASH_ATTR CNFGDrawText( const char * text, int scale );
 void ICACHE_FLASH_ATTR CNFGDrawBox(  int x1, int y1, int x2, int y2 );
 void ICACHE_FLASH_ATTR CNFGTackRectangle( short x1, short y1, short x2, short y2 );
