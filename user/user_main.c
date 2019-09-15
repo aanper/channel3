@@ -51,7 +51,7 @@ void ICACHE_FLASH_ATTR SetupMatrix( )
 
  
 
-#define INITIAL_SHOW_STATE 0
+#define INITIAL_SHOW_STATE 12
 
 extern int gframe;
 char lastct[256];
@@ -63,6 +63,10 @@ int showtemp = 0;
 int16_t Height( int x, int y, int l )
 {
 	return tdCOS( (x*x + y*y) + l );
+}
+
+void draw_circle(x, y, r) {
+
 }
 
 void ICACHE_FLASH_ATTR DrawFrame(  )
@@ -87,6 +91,28 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 
 	switch( showstate )
 	{
+		case 12: {
+			int shift = framessostate * 3;
+			framessostate += 1;
+			if(framessostate == 1000) {
+				framessostate = 0;
+			}
+
+			uint8_t p = 0;
+
+			for(p = 0; p < 255; p++) {
+				int16_t x = FBW + (int16_t)tdSIN(p)/8;
+				int16_t y = FBH/2 + (int16_t)tdCOS(p)/8;
+				CNFGTackRectangle(x, y, x + 1, y + 1);
+			}
+
+			CNFGPenX = 10 + shift % FBW/2;
+			CNFGPenY = 10 + shift % FBW;
+			CNFGDrawText( "HACKSPACE", 5 );
+
+			// CNFGTackRectangle( 0, 0, FBW-1, FBH-1);
+		} break;
+
 	case 11:  // State that's not in the normal set.  Just displays boxes.
 	{
 		for( i = 0; i < 16; i++ )
@@ -292,6 +318,7 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 
 	}
 
+	/*
 	if( showstate != newstate && showallowadvance )
 	{
 		showstate = newstate;
@@ -302,6 +329,7 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 	{
 		framessostate++;
 	}
+	*/
 
 }
 
