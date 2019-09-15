@@ -65,21 +65,22 @@ int16_t Height( int x, int y, int l )
 	return tdCOS( (x*x + y*y) + l );
 }
 
-void draw_circle(int c_x, int c_y, int r) {
+void draw_circle(int c_x, int c_y, int r_x, int r_y) {
 	uint8_t p = 0;
 
 	for(p = 0; p < 255; p++) {
-		int16_t x = c_x + (int16_t)tdSIN(p) * r/255;
-		int16_t y = c_y + (int16_t)tdCOS(p) * r/255;
+		int16_t x = c_x + (int16_t)tdSIN(p) * r_x/255;
+		int16_t y = c_y + (int16_t)tdCOS(p) * r_y/255;
 		CNFGTackPoint(x, y);
 	}
 }
 
 void ICACHE_FLASH_ATTR DrawFrame(  )
 {
-	char * ctx = &lastct[0];
+	// char * ctx = &lastct[0];
 	int x = 0;
 	int y = 0;
+	uint8_t p = 0;
 	int i;
 	int sqsiz = gframe&0x7f;
 	int newstate = showstate;
@@ -100,11 +101,91 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 				framessostate = 0;
 			}
 
-			draw_circle(FBW, FBH/2, 32);
+			x = (int16_t)(0.5 * FBW*2) + rand() % 10;
+			y = (int16_t)(0.5 * FBH) + rand() % 10;
+
+			draw_circle(x, y, 0.2 * FBH, 0.2 * FBW);
+
+			const int16_t angles[4] = {0, 255 * 0.15, 255 * 0.85, 255 * 0.5};
+
+			for(i = 0; i < 4; i++) {
+				p = (angles[i] + shift) % 255;
+
+				draw_circle(
+					x + (int16_t)(tdCOS(-p) * 0.4 * FBH/255),
+					y + (int16_t)(tdSIN(-p) * 0.4 * FBH/255),
+					0.05 * FBH, 0.05 * FBH
+				);
+
+				CNFGTackSegment(
+					x/2 + (int16_t)(tdCOS(-p) * 0.22 * FBH/512), // seg begin x
+					y + (int16_t)(tdSIN(-p) * 0.22 * FBH/255), // seg begin y
+					x/2 + (int16_t)(tdCOS(-p) * 0.33 * FBH/512), // seg end x
+					y + (int16_t)(tdSIN(-p) * 0.33 * FBH/255)  // seg end y
+				);
+			}
+
+			CNFGTackSegment(
+				x/2 + (int16_t)(-0.1 * FBW/2), // seg begin x
+				y + (int16_t)(-0.1 * FBH), // seg begin y
+				x/2 + (int16_t)(0.1 * FBW/2), // seg end x
+				y + (int16_t)(-0.1 * FBH)  // seg end y
+			);
+
+			CNFGTackSegment(
+				x/2 + (int16_t)(-0.1 * FBW/2), // seg begin x
+				y + (int16_t)(0.1 * FBH), // seg begin y
+				x/2 + (int16_t)(0.1 * FBW/2), // seg end x
+				y + (int16_t)(0.1 * FBH)  // seg end y
+			);
+
+			CNFGTackSegment(
+				x/2 + (int16_t)(0.0 * FBW/2), // seg begin x
+				y + (int16_t)(0.0 * FBH), // seg begin y
+				x/2 + (int16_t)(0.1 * FBW/2), // seg end x
+				y + (int16_t)(0.1 * FBH)  // seg end y
+			);
+
+			CNFGTackSegment(
+				x/2 + (int16_t)(0.0 * FBW/2), // seg begin x
+				y + (int16_t)(0.0 * FBH), // seg begin y
+				x/2 + (int16_t)(0.1 * FBW/2), // seg end x
+				y + (int16_t)(-0.1 * FBH)  // seg end y
+			);
+
+			/*
+			CNFGTackSegment(
+				x/2 + (int16_t)(0.55 * FBH), // seg begin x
+				y + (int16_t)(0.45 * FBH), // seg begin y
+				x/2 + (int16_t)(0.55 * FBH), // seg end x
+				y + (int16_t)(0.45 * FBH)  // seg end y
+			);
+			*/
+
+			/*
+			for (i = 0; i < 1; i++) {
+				
+				x = 0.5 * FBW*2 + (int16_t)tdSIN(p) * 0.4 * FBH/255;
+				y = 0.5 * FBH + (int16_t)tdCOS(p) * 0.4 * FBH/255;
+
+				
+			}
+			*/
+
+			// int16_t x = c_x + (int16_t)tdSIN(p) * r/255;
+			// int16_t y = c_y + (int16_t)tdCOS(p) * r/255;
+
+			// draw_circle(0.3 * FBW*2, 0.5 * FBH, 10);
+
+			// draw_circle(0.65 * FBW*2, 0.3 * FBH, 10);
+			// draw_circle(0.7  * FBW*2, 0.5 * FBH, 10);
+			
+
+			
 
 			CNFGPenX = 10 + shift % FBW/2;
 			CNFGPenY = 10 + shift % FBW;
-			CNFGDrawText( "HACKSPACE", 5 );
+			// CNFGDrawText( "HACKSPACE", 5 );
 
 			// CNFGTackRectangle( 0, 0, FBW-1, FBH-1);
 		} break;
@@ -274,6 +355,7 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 			if( framessostate > 120 ) newstate = 4;
 		}
 		break;
+	/*
 	case 2:
 		ctx += ets_sprintf( ctx, "ESP8266 Features:\n 802.11 Stack\n Xtensa Core @80 or 160 MHz\n 64kB IRAM\n 96kB DRAM\n 16 GPIO\n\
  SPI\n UART\n PWM\n ADC\n I2S with DMA\n                                                   \n Analog Broadcast Television\n" );
@@ -285,10 +367,13 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 		CNFGDrawText( lastct, 2 );
 		if( showtemp == 60 ) newstate = 3;
 		break;
+	*/
 	case 1:
 		i = ets_strlen( lastct );
 		lastct[i-framessostate] = 0;
 		if( i-framessostate == 1 ) newstate = 2;
+	
+	/*
 	case 0:
 	{
 		int stat = wifi_station_get_connect_status();
@@ -311,6 +396,7 @@ void ICACHE_FLASH_ATTR DrawFrame(  )
 		}
 		break;
 	}
+	*/
 
 	}
 

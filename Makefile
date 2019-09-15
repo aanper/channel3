@@ -21,7 +21,7 @@ SRCS:=driver/uart.c \
 
 GCC_FOLDER:=/opt/xtensa-lx106-elf/
 ESPTOOL_PY:=esptool.py
-SDK:=esp_iot_sdk_v1.5.3
+SDK:=ESP8266_NONOS_SDK
 PORT:=/dev/ttyUSB0
 #PORT:=/dev/ttyACM0
 
